@@ -1,7 +1,8 @@
-<?php
-namespace Model;
+<?php namespace Model\VATCheck;
 
-class VATCheck extends Module{
+use Model\Core\Module;
+
+class VATCheck extends Module {
 	/**
 	 * @var \SoapClient
 	 */
