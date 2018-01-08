@@ -9,7 +9,7 @@ class VATCheckTest extends TestCase{
 
 	private function getModelCore(){
 		if(!$this->model){
-			$this->model = $this->getMockBuilder('\\Model\\Core')->getMock();
+			$this->model = $this->getMockBuilder('\\Model\\Core\\Core')->getMock();
 		}
 
 		return $this->model;
