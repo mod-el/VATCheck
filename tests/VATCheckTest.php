@@ -37,10 +37,6 @@ class VATCheckTest extends TestCase{
 	 */
 	function testIfActiveCheckWorks($country, $vat, $expectedPassive, $expectedActive){
 		$v = new Model\VATCheck\VATCheck($this->getModelCore());
-
-//		$soapClient = $this->getMockBuilder('SoapClient')->getMock();
-//		$v->setSoapClient($soapClient);
-
 		$this->assertEquals($v->fullCheck($vat, $country), $expectedActive);
 	}
 }
