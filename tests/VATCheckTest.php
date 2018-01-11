@@ -20,6 +20,7 @@ class VATCheckTest extends TestCase{
 			['IT', '11194631005', true, true],
 			['IT', '02706510845', true, false],
 			['IT', '11111111111', false, false],
+			['MX', '4567890', true, true],
 		];
 	}
 
