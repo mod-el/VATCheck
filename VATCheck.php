@@ -7,6 +7,39 @@ class VATCheck extends Module {
 	 * @var \SoapClient
 	 */
 	private $soapClient = null;
+	/**
+	 * @var string[]
+	 */
+	private $supportedCountries = [
+		'AT',
+		'BE',
+		'BG',
+		'CY',
+		'CZ',
+		'DE',
+		'DK',
+		'EE',
+		'EL',
+		'ES',
+		'FI',
+		'FR',
+		'GB',
+		'HR',
+		'HU',
+		'IE',
+		'IT',
+		'LT',
+		'LU',
+		'LV',
+		'MT',
+		'NL',
+		'PL',
+		'PT',
+		'RO',
+		'SE',
+		'SI',
+		'SK',
+	];
 
 	/**
 	 * Checks VAT validity (only for Italian VATs)
@@ -66,7 +99,10 @@ class VATCheck extends Module {
 	 */
 	public function fullCheck($vat, $country = 'IT'){
 		if($this->checkValidity($vat, $country)){
-			return $this->checkExisting($vat, $country);
+			if(in_array($country, $this->supportedCountries))
+				return $this->checkExisting($vat, $country);
+			else
+				return true;
 		}else{
 			return false;
 		}
