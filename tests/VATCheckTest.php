@@ -1,21 +1,25 @@
 <?php
+
 use PHPUnit\Framework\TestCase;
 
-require('..'.DIRECTORY_SEPARATOR.'Core'.DIRECTORY_SEPARATOR.'Module.php');
+require('..' . DIRECTORY_SEPARATOR . 'Core' . DIRECTORY_SEPARATOR . 'Module.php');
 require('VATCheck.php');
 
-class VATCheckTest extends TestCase{
+class VATCheckTest extends TestCase
+{
 	private $model = null;
 
-	private function getModelCore(){
-		if(!$this->model){
+	private function getModelCore()
+	{
+		if (!$this->model) {
 			$this->model = $this->getMockBuilder('\\Model\\Core\\Core')->getMock();
 		}
 
 		return $this->model;
 	}
 
-	public function providerVats(){
+	public function providerVats(): array
+	{
 		return [
 			['IT', '11194631005', true, true],
 			['IT', '02706510845', true, false],
@@ -27,7 +31,8 @@ class VATCheckTest extends TestCase{
 	/**
 	 * @dataProvider providerVats
 	 */
-	function testIfPassiveCheckWorks($country, $vat, $expectedPassive, $expectedActive){
+	function testIfPassiveCheckWorks(string $country, string $vat, bool $expectedPassive, bool $expectedActive)
+	{
 		$v = new Model\VATCheck\VATCheck($this->getModelCore());
 
 		$this->assertEquals($v->checkValidity($vat, $country), $expectedPassive);
@@ -36,7 +41,8 @@ class VATCheckTest extends TestCase{
 	/**
 	 * @dataProvider providerVats
 	 */
-	function testIfActiveCheckWorks($country, $vat, $expectedPassive, $expectedActive){
+	function testIfActiveCheckWorks(string $country, string $vat, bool $expectedPassive, bool $expectedActive)
+	{
 		$v = new Model\VATCheck\VATCheck($this->getModelCore());
 		$this->assertEquals($v->fullCheck($vat, $country), $expectedActive);
 	}

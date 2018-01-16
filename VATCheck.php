@@ -2,7 +2,8 @@
 
 use Model\Core\Module;
 
-class VATCheck extends Module {
+class VATCheck extends Module
+{
 	/**
 	 * @var \SoapClient
 	 */
@@ -48,10 +49,11 @@ class VATCheck extends Module {
 	 * @param string $country
 	 * @return bool
 	 */
-	public function checkValidity($vat, $country = 'IT'){
+	public function checkValidity(string $vat, string $country = 'IT'): bool
+	{
 		$vat = trim($vat);
 
-		switch($country){
+		switch ($country) {
 			case 'IT':
 				return $this->checkItalianValidity($vat);
 				break;
@@ -65,26 +67,27 @@ class VATCheck extends Module {
 	 * @param string $vat
 	 * @return bool
 	 */
-	private function checkItalianValidity($vat){
-		if(empty($vat))
+	private function checkItalianValidity(string $vat): bool
+	{
+		if (empty($vat))
 			return false;
 
-		if(strlen($vat)!==11)
+		if (strlen($vat) !== 11)
 			return false;
 
-		if(preg_match("/^[0-9]+\$/", $vat) != 1)
+		if (preg_match("/^[0-9]+\$/", $vat) != 1)
 			return false;
 
 		$s = 0;
-		for( $i = 0; $i <= 9; $i += 2 )
+		for ($i = 0; $i <= 9; $i += 2)
 			$s += ord($vat[$i]) - ord('0');
-		for( $i = 1; $i <= 9; $i += 2 ){
-			$c = 2*( ord($vat[$i]) - ord('0') );
-			if( $c > 9 )
+		for ($i = 1; $i <= 9; $i += 2) {
+			$c = 2 * (ord($vat[$i]) - ord('0'));
+			if ($c > 9)
 				$c = $c - 9;
 			$s += $c;
 		}
-		if( ( 10 - $s%10 )%10 != ord($vat[10]) - ord('0') )
+		if ((10 - $s % 10) % 10 != ord($vat[10]) - ord('0'))
 			return false;
 
 		return true;
@@ -93,17 +96,18 @@ class VATCheck extends Module {
 	/**
 	 * Performs a full check of the VAT (validity and online existing check)
 	 *
-	 * @param $vat
+	 * @param string $vat
 	 * @param string $country
 	 * @return bool
 	 */
-	public function fullCheck($vat, $country = 'IT'){
-		if($this->checkValidity($vat, $country)){
-			if(in_array($country, $this->supportedCountries))
+	public function fullCheck(string $vat, string $country = 'IT'): bool
+	{
+		if ($this->checkValidity($vat, $country)) {
+			if (in_array($country, $this->supportedCountries))
 				return $this->checkExisting($vat, $country);
 			else
 				return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -113,12 +117,13 @@ class VATCheck extends Module {
 	 * @param string $country
 	 * @return bool
 	 */
-	public function checkExisting($vat, $country = 'IT'){
+	public function checkExisting(string $vat, string $country = 'IT'): bool
+	{
 		$response = $this->sendRequest($vat, $country);
 
-		if($response and $response->valid){
+		if ($response and $response->valid) {
 			return true;
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -128,7 +133,8 @@ class VATCheck extends Module {
 	 * @param string $country
 	 * @return \stdClass
 	 */
-	private function sendRequest($vat, $country){
+	private function sendRequest(string $vat, string $country): \stdClass
+	{
 		$soapClient = $this->getSoapClient();
 
 		return $soapClient->checkVat([
@@ -142,12 +148,13 @@ class VATCheck extends Module {
 	 *
 	 * @return \SoapClient
 	 */
-	private function getSoapClient(){
-		if(!$this->soapClient){
+	private function getSoapClient(): \SoapClient
+	{
+		if (!$this->soapClient) {
 			$this->soapClient = new \SoapClient('http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl', [
-				'trace'=>1,
-				'exceptions'=>0,
-				'cache_wsdl'=>0
+				'trace' => 1,
+				'exceptions' => 0,
+				'cache_wsdl' => 0
 			]);
 		}
 
@@ -159,7 +166,8 @@ class VATCheck extends Module {
 	 *
 	 * @param \SoapClient $soapClient
 	 */
-	public function setSoapClient(\SoapClient $soapClient){
+	public function setSoapClient(\SoapClient $soapClient)
+	{
 		$this->soapClient = $soapClient;
 	}
 }
