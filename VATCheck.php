@@ -99,6 +99,7 @@ class VATCheck extends Module
 	 * @param string $vat
 	 * @param string $country
 	 * @return bool
+	 * @throws \Exception
 	 */
 	public function fullCheck(string $vat, string $country = 'IT'): bool
 	{
@@ -116,14 +117,21 @@ class VATCheck extends Module
 	 * @param string $vat
 	 * @param string $country
 	 * @return bool
+	 * @throws \Exception
 	 */
-	public function checkExisting(string $vat, string $country = 'IT'): bool
+	public function checkExisting($vat, $country = 'IT')
 	{
-		$response = $this->sendRequest($vat, $country);
+		try {
+			$response = $this->sendRequest($vat, $country);
 
-		if ($response and $response->valid) {
-			return true;
-		} else {
+			if ($response and $response->valid) {
+				return true;
+			} else {
+				return false;
+			}
+		} catch (\Exception $e) {
+			if (DEBUG_MODE)
+				throw $e;
 			return false;
 		}
 	}
@@ -153,8 +161,9 @@ class VATCheck extends Module
 		if (!$this->soapClient) {
 			$this->soapClient = new \SoapClient('http://ec.europa.eu/taxation_customs/vies/checkVatService.wsdl', [
 				'trace' => 1,
-				'exceptions' => 0,
-				'cache_wsdl' => 0
+				'exceptions' => 1,
+				'cache_wsdl' => 0,
+				'connection_timeout' => 10,
 			]);
 		}
 
