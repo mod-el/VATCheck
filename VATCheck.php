@@ -104,7 +104,7 @@ class VATCheck extends Module
 	public function fullCheck(string $vat, string $country = 'IT'): bool
 	{
 		if ($this->checkValidity($vat, $country)) {
-			if (in_array($country, $this->supportedCountries))
+			if ($this->isCountrySupported($country))
 				return $this->checkExisting($vat, $country);
 			else
 				return true;
@@ -134,6 +134,15 @@ class VATCheck extends Module
 				throw $e;
 			return false;
 		}
+	}
+
+	/**
+	 * @param string $country
+	 * @return bool
+	 */
+	public function isCountrySupported(string $country): bool
+	{
+		return in_array($country, $this->supportedCountries);
 	}
 
 	/**
